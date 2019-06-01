@@ -95,4 +95,44 @@ public:
 		// Generate the game board.
 		generate_board();
 	}
+
+	// Load the border sprites.
+	void load_borders() {
+		Sprite sheet("Border.png");
+		for (int i = 0; i < 9; i++) {
+			border[i] = Sprite(sheet, i * 10, 0, 10, 10);
+		}
+	}
+
+	// Load the tile sprites.
+	void load_tiles() {
+		Sprite sheet("Tile.png");
+		for (int i = 0; i < 8; i++) {
+			tile[i] = Sprite(sheet, i * 16, 0, 16, 16);
+		}
+		for (int i = 0; i < 8; i++) {
+			tile[i + 8] = Sprite(sheet, i * 16, 16, 16, 16);
+		}
+	}
+
+	// Load the counter sprites.
+	void load_counters() {
+		Sprite sheet("Counter.png");
+		for (int i = 0; i < 10; i++) {
+			counter[i] = Sprite(sheet, i * 13, 0, 13, 23);
+		}
+	}
+
+	// Load the smiley sprites.
+	void load_smileys() {
+		Sprite sheet("Smiley.png");
+		for (int i = 0; i < 5; i++) {
+			smiley[i] = Sprite(sheet, i * 26, 0, 26, 26);
+		}
+	}
+
+	// Load the frame sprite.
+	void load_frame() {
+		frame = Sprite("Frame.png");
+	}
 };
