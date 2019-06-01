@@ -248,4 +248,43 @@ public:
 		}
 		return true;
 	}
+
+	// Uncover a cell.
+	void uncover(int x, int y) {
+		if (state == GAME_WINNER ||
+			state == GAME_LOSER) {
+			// Can't interact with a board after the game is finished.
+			return;
+		}
+		if (!is_bound(x, y)) {
+			return;
+		}
+		Cell& cell = board[y * x_cells + x];
+		if (!cell.is_uncovered) {
+			// A cell is being uncovered.
+			if (state == GAME_WAITING) {
+				state = GAME_PLAYING;
+				start_ticks = SDL_GetTicks();
+				// Divert mines away from the first click.
+				divert(x, y);
+			}
+			cell.is_uncovered = true;
+			if (cell.is_mine) {
+				// The player uncovered a mine!
+				state = GAME_LOSER;
+				end_ticks = SDL_GetTicks();
+				cell.is_culprit = true;
+			} else if (cell.neighbours == 0) {
+				// Recursively uncover neighbouring cells.
+				uncover(x - 1, y    );
+				uncover(x + 1, y    );
+				uncover(x    , y - 1);
+				uncover(x    , y + 1);
+				uncover(x - 1, y - 1);
+				uncover(x - 1, y + 1);
+				uncover(x + 1, y - 1);
+				uncover(x + 1, y + 1);
+			}
+		}
+	}
 };
