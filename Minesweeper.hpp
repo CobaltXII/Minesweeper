@@ -171,4 +171,25 @@ public:
 		// Calculate the neighbouring mine count of each cell.
 		calculate_neighbours();
 	}
+
+	// Calculate the neighbouring mine count of each cell.
+	void calculate_neighbours() {
+		for (int y = 0; y < y_cells; y++) {
+			for (int x = 0; x < x_cells; x++) {
+				Cell& cell = board[y * x_cells + x];
+				cell.neighbours = 0;
+				for (int v = 0; v < 3; v++) {
+					for (int u = 0; u < 3; u++) {
+						int i = x - 1 + u;
+						int j = y - 1 + v;
+						if (is_bound(i, j)) {
+							if (board[j * x_cells + i].is_mine) {
+								cell.neighbours++;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 };
