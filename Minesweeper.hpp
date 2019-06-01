@@ -312,4 +312,18 @@ public:
 			cell.is_flagged = !cell.is_flagged;
 		}
 	}
+
+	// Solve the board.
+	void solve() {
+		for (int y = 0; y < y_cells; y++) {
+			for (int x = 0; x < x_cells; x++) {
+				Cell& cell = board[y * x_cells + x];
+				if (cell.is_mine) {
+					cell.is_flagged = true;
+				} else {
+					cell.is_uncovered = true;
+				}
+			}
+		}
+	}
 };
