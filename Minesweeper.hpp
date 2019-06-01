@@ -326,4 +326,107 @@ public:
 			}
 		}
 	}
+
+	// Start the game.
+	void start() {
+		// The mouse coordinates.
+		int mouse_x = 0;
+		int mouse_y = 0;
+
+		// The mouse state.
+		bool mouse_l = false;
+		bool mouse_r = false;
+		bool mouse_al = false;
+		bool mouse_ar = false;
+
+		// Loop until the game is quit.
+		while (1) {
+			// Poll events.
+			SDL_Event e;
+			while (SDL_PollEvent(&e) == SDL_TRUE) {
+				if (e.type == SDL_QUIT) {
+					return;
+				} else if (e.type == SDL_KEYDOWN) {
+					SDL_Keycode key = e.key.keysym.sym;
+					if (key == SDLK_s) {
+						// Solve the board.
+						if (state == GAME_PLAYING) {
+							solve();
+							state = GAME_WINNER;
+							end_ticks = SDL_GetTicks();
+							flags = mines;
+						}
+					} else if (key == SDLK_e) {
+						// Export a screenshot.
+						char export_path[20];
+						sprintf(export_path, "export%010ld.bmp", time(NULL));
+						adapter.save_bmp(export_path);
+					}
+				} else if (e.type == SDL_MOUSEMOTION) {
+					mouse_x = e.motion.x / adapter.scale;
+					mouse_y = e.motion.y / adapter.scale;
+				} else if (e.type == SDL_MOUSEBUTTONDOWN) {
+					int cell_x = (mouse_x - xoff) / 16;
+					int cell_y = (mouse_y - yoff) / 16;
+					if (is_bound(cell_x, cell_y) && mouse_y > yoff && mouse_x > xoff) {
+						if (e.button.button == SDL_BUTTON_LEFT) {
+							mouse_l = true;
+						} else if (e.button.button == SDL_BUTTON_RIGHT) {
+							mouse_r = true;
+						}
+					}
+					if (e.button.button == SDL_BUTTON_LEFT) {
+						mouse_al = true;
+					} else if (e.button.button == SDL_BUTTON_RIGHT) {
+						mouse_ar = true;
+					}
+				} else if (e.type == SDL_MOUSEBUTTONUP) {
+					int cell_x = (mouse_x - xoff) / 16;
+					int cell_y = (mouse_y - yoff) / 16;
+					if (e.button.button == SDL_BUTTON_LEFT) {
+						if (mouse_l) {
+							// Uncover a cell if the mouse is within the game
+							// board's bounds.
+							if (is_bound(cell_x, cell_y) && mouse_y > yoff && mouse_x > xoff) {
+								uncover(cell_x, cell_y);
+							}
+							// Check if the player won.
+							if (winner() && state == GAME_PLAYING) {
+								state = GAME_WINNER;
+								end_ticks = SDL_GetTicks();
+								flags = mines;
+								printf("You swept a %dx%d field with %d mines in %.2f seconds\n", x_cells, y_cells, mines, float(end_ticks - start_ticks) / 1000.0f);
+							}
+						} else if (mouse_al) {
+							// Restart the game if the smiley was pressed.
+							if (mouse_x >= adapter.x_res / 2 - 13 && mouse_x <= adapter.x_res / 2 + 13 && mouse_y > 12 && mouse_y <= 38) {
+								state = GAME_WAITING;
+								start_ticks = 0;
+								end_ticks = 0;
+								generate_board();
+							}
+						}
+						mouse_l = false;
+						mouse_al = false;
+					} else if (e.button.button == SDL_BUTTON_RIGHT) {
+						if (mouse_r) {
+							// Flag or unflag a cell if the mouse is within
+							// the game board's bounds.
+							if (is_bound(cell_x, cell_y) && mouse_y > yoff && mouse_x > xoff) {
+								flag(cell_x, cell_y);
+							}
+						}
+						mouse_r = false;
+						mouse_ar = false;
+					}
+				}
+			}
+		}
+		return;
+	}
+
+	// End the game.
+	void end() {
+		adapter.quit();
+	}
 };
