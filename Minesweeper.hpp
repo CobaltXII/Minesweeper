@@ -235,4 +235,17 @@ public:
 		// Calculate the neighbouring mine count of each cell.
 		calculate_neighbours();
 	}
+
+	// Check if all non-mine cells have been uncovered.
+	bool winner() {
+		for (int y = 0; y < y_cells; y++) {
+			for (int x = 0; x < x_cells; x++) {
+				Cell& cell = board[y * x_cells + x];
+				if (!cell.is_mine && !cell.is_uncovered) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 };
