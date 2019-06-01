@@ -1,0 +1,1 @@
+clang++ Main.cpp -o Minesweeper.o -std=c++11 `sdl2-config --cflags --libs` && ./Minesweeper.o
