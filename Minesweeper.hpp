@@ -421,6 +421,28 @@ public:
 					}
 				}
 			}
+
+			// Render the border.
+			for (int y = 0; y < yoff; y += 10) {
+				for (int x = 0; x < adapter.x_res; x += 10) {
+					adapter.draw_sprite(border[BORDER_SOLID], x, y);
+				}
+			}
+			for (int x = 0; x < adapter.x_res; x += 10) {
+				adapter.draw_sprite(border[BORDER_X_SOLID], x, 0                 );
+				adapter.draw_sprite(border[BORDER_X_SOLID], x, yoff - 10         );
+				adapter.draw_sprite(border[BORDER_X_SOLID], x, adapter.y_res - 10);
+			}
+			for (int y = 0; y < adapter.y_res; y += 10) {
+				adapter.draw_sprite(border[BORDER_Y_SOLID], 0                 , y);
+				adapter.draw_sprite(border[BORDER_Y_SOLID], adapter.x_res - 10, y);
+			}
+			adapter.draw_sprite(border[BORDER_TOP_LEFT]    , 0                 , 0                 );
+			adapter.draw_sprite(border[BORDER_TOP_RIGHT]   , adapter.x_res - 10, 0                 );
+			adapter.draw_sprite(border[BORDER_BOTTOM_LEFT] , 0                 , adapter.y_res - 10);
+			adapter.draw_sprite(border[BORDER_BOTTOM_RIGHT], adapter.x_res - 10, adapter.y_res - 10);
+			adapter.draw_sprite(border[BORDER_JOINT_LEFT]  , 0                 , yoff - 10         );
+			adapter.draw_sprite(border[BORDER_JOINT_RIGHT] , adapter.x_res - 10, yoff - 10         );
 		}
 		return;
 	}
