@@ -463,6 +463,26 @@ public:
 			for (int i = 0; i < 3; i++) {
 				adapter.draw_sprite(counter[timer_str[i] - '0'], adapter.x_res - 57 + i * 13, 14);
 			}
+
+			// Render the smiley.
+			int smiley_type;
+			if (state == GAME_WINNER) {
+				smiley_type = SMILEY_HAPPY;
+			} else if (state == GAME_LOSER) {
+				smiley_type = SMILEY_SAD;
+			} else if (state == GAME_WAITING) {
+				smiley_type = SMILEY_DEFAULT;
+			} else if (state == GAME_PLAYING) {
+				if (mouse_l || mouse_r) {
+					smiley_type = SMILEY_WORRIED;
+				} else {
+					smiley_type = SMILEY_DEFAULT;
+				}
+			}
+			if (mouse_al && !mouse_l && mouse_x >= adapter.x_res / 2 - 13 && mouse_x <= adapter.x_res / 2 + 13 && mouse_y > 12 && mouse_y <= 38) {
+				smiley_type = SMILEY_PRESSED;
+			}
+			adapter.draw_sprite(smiley[smiley_type], adapter.x_res / 2 - 13, 12);
 		}
 		return;
 	}
