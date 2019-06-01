@@ -483,6 +483,72 @@ public:
 				smiley_type = SMILEY_PRESSED;
 			}
 			adapter.draw_sprite(smiley[smiley_type], adapter.x_res / 2 - 13, 12);
+
+			// Render the board.
+			for (int y = 0; y < y_cells; y++) {
+				for (int x = 0; x < x_cells; x++) {
+					Cell& cell = board[y * x_cells + x];
+					int tile_type;
+					if (state == GAME_WINNER && cell.is_mine) {
+						// The cell is a mine.
+						tile_type = TILE_FLAGGED;
+					} else if (state == GAME_LOSER && cell.is_mine) {
+						// The cell is a mine.
+						if (cell.is_culprit) {
+							// The cell is the culprit mine.
+							tile_type = TILE_MINE2;
+						} else if (cell.is_flagged) {
+							// The cell is a correctly flagged mine.
+							tile_type = TILE_FLAGGED;
+						} else {
+							// The cell is an undiscovered mine.
+							tile_type = TILE_MINE1;
+						}
+					} else if (state == GAME_LOSER && cell.is_flagged && !cell.is_mine) {
+						// The cell is an incorrectly flagged mine.
+						tile_type = TILE_MINE3;
+					} else if (cell.is_uncovered) {
+						// The cell is uncovered.
+						if (cell.neighbours == 0) {
+							// The cell is uncovered and has no neighbouring
+							// mines.
+							tile_type = TILE_UNCOVERED;
+						} else {
+							// The cell is uncovered and has at least one
+							// neighbouring mine.
+							tile_type = 7 + cell.neighbours;
+						}
+					} else {
+						// The cell is covered.
+						if (cell.is_flagged) {
+							// The cell is covered and is flagged.
+							tile_type = TILE_FLAGGED;
+						} else {
+							// The cell is covered and is not flagged.
+							tile_type = TILE_COVERED;
+						}
+					}
+					adapter.draw_sprite(tile[tile_type], x * 16 + xoff, y * 16 + yoff);
+				}
+			}
+
+			// Render a 'pressed' cell under the mouse if the player is
+			// picking a cell.
+			if ((state == GAME_PLAYING || state == GAME_WAITING) && (mouse_l || mouse_r)) {
+				int cell_x = (mouse_x - xoff) / 16;
+				int cell_y = (mouse_y - yoff) / 16;
+				if (is_bound(cell_x, cell_y) && mouse_y > yoff && mouse_x > xoff) {
+					Cell& cell = board[cell_y * x_cells + cell_x];
+					if (!cell.is_uncovered) {
+						adapter.draw_sprite(tile[TILE_UNCOVERED], cell_x * 16 + xoff, cell_y * 16 + yoff);
+					}
+				}
+			}
+
+			// Push the frame to the graphics adapter.
+			adapter.push();
+			// Cap the framerate to 60 Hz.
+			adapter.cap(60);
 		}
 		return;
 	}
