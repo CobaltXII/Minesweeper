@@ -1,6 +1,8 @@
 ## Synopsis
 A Microsoft Minesweeper clone written in C++11
 
+![Alt text](https://github.com/CobaltXII/Minesweeper/blob/master/img/Minesweeper.png?raw=true)
+
 ## Abstract
 Minesweeper is a Microsoft Minesweeper clone written in C++11. From Wikipedia: "Minesweeper is a single-player puzzle video game. The objective of the game is to clear a rectangular board containing hidden "mines" or bombs without detonating any of them, with help from clues about the number of neighboring mines in each field.".
 
