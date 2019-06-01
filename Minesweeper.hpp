@@ -443,6 +443,26 @@ public:
 			adapter.draw_sprite(border[BORDER_BOTTOM_RIGHT], adapter.x_res - 10, adapter.y_res - 10);
 			adapter.draw_sprite(border[BORDER_JOINT_LEFT]  , 0                 , yoff - 10         );
 			adapter.draw_sprite(border[BORDER_JOINT_RIGHT] , adapter.x_res - 10, yoff - 10         );
+
+			// Render the flag counter.
+			char flag_counter_str[4];
+			sprintf(flag_counter_str, "%03d", std::max(0, mines - flags));
+			adapter.draw_sprite(frame, 16, 12);
+			for (int i = 0; i < 3; i++) {
+				adapter.draw_sprite(counter[flag_counter_str[i] - '0'], 18 + i * 13, 14);
+			}
+
+			// Render the timer.
+			char timer_str[4];
+			if (state == GAME_PLAYING) {
+				sprintf(timer_str, "%03d", std::min(999u, (SDL_GetTicks() - start_ticks) / 1000));
+			} else {
+				sprintf(timer_str, "%03d", std::min(999u, (end_ticks - start_ticks) / 1000));
+			}
+			adapter.draw_sprite(frame, adapter.x_res - 59, 12);
+			for (int i = 0; i < 3; i++) {
+				adapter.draw_sprite(counter[timer_str[i] - '0'], adapter.x_res - 57 + i * 13, 14);
+			}
 		}
 		return;
 	}
