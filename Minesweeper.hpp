@@ -192,4 +192,47 @@ public:
 			}
 		}
 	}
+
+	// Divert a cell and it's neighbours so that there are no mines in the
+	// neighbourhood of a cell.
+	void divert(int x, int y) {
+		for (int v = 0; v < 3; v++) {
+			for (int u = 0; u < 3; u++) {
+				// The variables i and j are the coordinates of a neighbour.
+				int i = x - 1 + u;
+				int j = y - 1 + v;
+				if (is_bound(i, j)) {
+					Cell& cell = board[j * x_cells + i];
+					if (cell.is_mine) {
+						// Divert this mine.
+						while (1) {
+							// Pick a random position for the mine.
+							int n = rand() % x_cells;
+							int m = rand() % y_cells;
+							if (is_bound(n, m)) {
+								Cell& cell = board[m * x_cells + n];
+								// Check if the cell at the new position is
+								// already a mine.
+								if (cell.is_mine) {
+									continue;
+								}
+								// Check if the new position lies within the
+								// neighbourhood of the cell to divert away from.
+								if (n >= x - 1 && n <= x + 1 &&
+									m >= y - 1 && m <= y + 1)
+								{
+									continue;
+								}
+								cell.is_mine = true;
+								break;
+							}
+						}
+						cell.is_mine = false;
+					}
+				}
+			}
+		}
+		// Calculate the neighbouring mine count of each cell.
+		calculate_neighbours();
+	}
 };
