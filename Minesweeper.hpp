@@ -31,3 +31,12 @@ enum {
 	SMILEY_HAPPY,
 	SMILEY_SAD
 };
+
+// A cell.
+struct Cell {
+	int neighbours;
+	bool is_uncovered;
+	bool is_flagged;
+	bool is_mine;
+	bool is_culprit;
+};
