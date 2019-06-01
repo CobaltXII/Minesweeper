@@ -135,4 +135,40 @@ public:
 	void load_frame() {
 		frame = Sprite("Frame.png");
 	}
+
+	// Check if a coordinate is within the bounds of the game board.
+	inline bool is_bound(int x, int y) {
+		return x >= 0 && x < x_cells &&
+			   y >= 0 && y < y_cells;
+	}
+
+	// Generate the game board.
+	void generate_board() {
+		flags = 0;
+		// Clear the game board.
+		for (int y = 0; y < y_cells; y++) {
+			for (int x = 0; x < x_cells; x++) {
+				Cell& cell = board[y * x_cells + x];
+				cell.neighbours = 0;
+				cell.is_uncovered = false;
+				cell.is_flagged = false;
+				cell.is_mine = false;
+				cell.is_culprit = false;
+			}
+		}
+		// Add some mines.
+		for (int i = 0; i < mines; i++) {
+			while (1) {
+				int x = rand() % x_cells;
+				int y = rand() % y_cells;
+				Cell& cell = board[y * x_cells + x];
+				if (!cell.is_mine) {
+					cell.is_mine = true;
+					break;
+				}
+			}
+		}
+		// Calculate the neighbouring mine count of each cell.
+		calculate_neighbours();
+	}
 };
