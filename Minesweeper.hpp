@@ -287,4 +287,29 @@ public:
 			}
 		}
 	}
+
+	// Flag or unflag a cell.
+	void flag(int x, int y) {
+		if (state == GAME_WINNER ||
+			state == GAME_LOSER) {
+			// Can't interact with a board after the game is finished.
+			return;
+		}
+		if (!is_bound(x, y)) {
+			return;
+		}
+		Cell& cell = board[y * x_cells + x];
+		if (!cell.is_uncovered) {
+			if (state == GAME_WAITING) {
+				state = GAME_PLAYING;
+				start_ticks = SDL_GetTicks();
+			}
+			if (cell.is_flagged) {
+				flags--;
+			} else {
+				flags++;
+			}
+			cell.is_flagged = !cell.is_flagged;
+		}
+	}
 };
